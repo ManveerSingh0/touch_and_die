@@ -1,0 +1,14 @@
+/**
+ * @breif Handles the rending of the game
+ */
+
+#include <raylib.h>
+
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 800
+#define SCREEN_TITLE "Touch and Die"
+
+
+
+void render();
+

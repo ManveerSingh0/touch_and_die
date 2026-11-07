@@ -17,6 +17,23 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(raylib)
 
-add_executable(touch_and_die client/main.c)
+add_executable(touch_and_die client/main.c client/player.c client/render.c)
 
 target_link_libraries(touch_and_die PRIVATE raylib)
+
+
+find_package(Doxygen OPTIONAL_COMPONENTS dot)   # dot = graphviz, for graphs
+if(Doxygen_FOUND)
+    # Each DOXYGEN_<TAG> variable becomes a <TAG> line in the generated Doxyfile.
+    # PROJECT_NAME, PROJECT_NUMBER and PROJECT_BRIEF are filled from project().
+    set(DOXYGEN_OPTIMIZE_OUTPUT_FOR_C YES)
+    set(DOXYGEN_EXTRACT_ALL           NO)    # undocumented things -> warnings
+    set(DOXYGEN_WARN_IF_UNDOCUMENTED  YES)
+    set(DOXYGEN_USE_MDFILE_AS_MAINPAGE ${PROJECT_SOURCE_DIR}/README.md)
+
+    doxygen_add_docs(docs
+        ${PROJECT_SOURCE_DIR}/README.md
+        ${PROJECT_SOURCE_DIR}/client
+        COMMENT "Generating API documentation with Doxygen"
+    )
+endif()
