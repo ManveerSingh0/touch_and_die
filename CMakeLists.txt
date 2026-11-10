@@ -17,9 +17,20 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(raylib)
 
-add_executable(touch_and_die client/main.c client/player.c client/render.c)
+add_library(client
+	client/player.c
+	client/render.c
+	client/input.c	
+)
 
-target_link_libraries(touch_and_die PRIVATE raylib)
+target_link_directories(client PUBLIC ${CMAKE_SOURCE_DIR}/client)
+target_link_libraries(client PUBLIC raylib)
+
+add_executable(touch_and_die client/main.c)
+
+target_link_libraries(touch_and_die PRIVATE client)
+
+
 
 
 find_package(Doxygen OPTIONAL_COMPONENTS dot)   # dot = graphviz, for graphs

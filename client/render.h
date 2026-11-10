@@ -1,6 +1,12 @@
+#ifndef RENDER_H
+#define RENDER_H
+
+
 /**
  * @breif Handles the rending of the game
  */
+
+
 
 #include <raylib.h>
 
@@ -12,3 +18,4 @@
 
 void render();
 
+#endif // RENDER_H
