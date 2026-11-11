@@ -14,6 +14,7 @@ FetchContent_Declare(
 	raylib
 	GIT_REPOSITORY https://github.com/raysan5/raylib.git
 	GIT_TAG 6.2
+	GIT_SHALLOW ON
 )
 FetchContent_MakeAvailable(raylib)
 
@@ -21,6 +22,7 @@ add_library(client
 	client/player.c
 	client/render.c
 	client/input.c	
+	client/background.c
 )
 
 target_link_directories(client PUBLIC ${CMAKE_SOURCE_DIR}/client)

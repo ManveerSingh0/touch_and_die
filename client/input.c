@@ -28,6 +28,5 @@ m_vec2 moves(int key , m_vec2 current_position) {
     current_position.x -= 0;
     current_position.y += 10;
   }
-  printf("%f is x \n %f is y" , current_position.x , current_position.y);
   return (m_vec2){current_position.x , current_position.y};
 }
