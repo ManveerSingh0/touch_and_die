@@ -1,3 +1,0 @@
-/**
- * @file background.h
- */
