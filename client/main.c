@@ -23,7 +23,7 @@
  */ 
 
 #define PLAYER_SIZE       50
-#define PLAYER_SPEED      100.0f
+#define PLAYER_SPEED      300.0f
 #define PLAYER_COLOR      RED
 #define PLAYER_Y_POSITION (SCREEN_HEIGHT - PLAYER_SIZE)
 
