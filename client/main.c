@@ -2,163 +2,149 @@
 
 /**
  * @mainpage TouchAndDie
- * @brief writing game in one file because i am new to development 
+ * @brief writing the game in one file for now later it will be divided in multiple files 
  */
 
 
-// Constants 
+
+/** @name Window
+ * The window everything is drawin in 
+ * @{
+ */
 #define SCREEN_WIDTH  800
 #define SCREEN_HEIGHT 800
 #define TARGET_FPS    60
 #define GAME_TITLE    "Touch And Die"
 #define GAME_ICON     
+/** @} */
 
+/** @name Player
+ * Player Size , color , speed, constant position of it
+ */ 
 
-#define PLAYER_WIDTH      50
-#define PLAYER_HEIGHT     50
-#define PLAYER_Y_POSITION (SCREEN_HEIGHT - PLAYER_HEIGHT)
-#define PLAYER_SPEED      10
+#define PLAYER_SIZE       50
+#define PLAYER_SPEED      100.0f
 #define PLAYER_COLOR      RED
+#define PLAYER_Y_POSITION (SCREEN_HEIGHT - PLAYER_SIZE)
 
+/**
+ *  maximum a player can move to the player_max_x position  to the right side
+ */
+#define PLAYER_MAX_X (SCREEN_WIDTH - PLAYER_SIZE)
+/** @} */
 
-#define OBJECT_WIDTH  20
-#define OBJECT_HEIGHT 50 
 
 
 
 // Data Definitions 
 /**
- * @brief Player on the bord
- * Template:
+ * @brief player is the x position of the player 
  * @code{.c}
- * ??? fn_for_player(Player c){
- * return ... player.x
- *            player.y;
- *}
+ * ??? fn_for_player(player p){
+ *   return ... p.x;
+ * }
  * @endcode
- * Template rule used:
- * - compound: 2 fields 
+ * Examples:
+ * Player P1 = {.x = SCREEN_WIDTH / 2 } ;; Middle of the screen 
+ * Player P2 = {.x = 0} ;; left side of the screen 
+ * Player P3 = {.x = PLAYER_MAX_X } ;; max right side of the screen 
  */
 
 typedef struct{
-  int x;
-  int y;
-}Player;
-
-
-const Player P_LEFT   = {.x = 0, .y = PLAYER_Y_POSITION};  
-const Player P_MIDDLE = {.x = SCREEN_WIDTH / 2 , .y = PLAYER_Y_POSITION}; 
-const Player P_RIGHT  = {.x = SCREEN_WIDTH , .y = PLAYER_Y_POSITION}; 
-
+  float x;
+}player;
 
 
 /**
- * @brief PlayerXPosition is Integer
- * interp. Player x position is the x position on the window where
- * 0 <= PlayerXPosition  <= SCREEN_WIDTH 
- * 
- * Template:
+ * @brief struct to check which key is pressed and which is not 
  * @code{.c}
- * ??? fn_for_player_x_position(int pxp){
- *    (... pxp)
+ * ??? fn_for_player_input(player_input pi){
+ *  return ... pi.left, 
+ *             pi.right;
  * }
- * @endcode
- * Template rule used:
- * atomic distinct: Integer
+ * Examples:
+ * player_input PI1 = {.left = true , .right = false } ;; Player wants to move left
+ * player_input PI1 = {.left = false , .right = true } ;; Player wants to move right
+ * player_input PI1 = {.left = true , .right = true } ;; No movement because both keys are pressed
  */
+typedef struct {
+  bool left;
+  bool right; 
+}player_input;
 
-int P1 = 0;
-int P2 = 200;
-int p3 = 800;
+
+
+
+// Function Definition 
+/**
+ * @brief Reads the input from the keyboard
+ * By using the raylib provided KEYS and updates the player_input 
+ * @param void 
+ * @return player_input 
+ * <use template from player_input data definition>  
+ */
+player_input read_input(){
+  return (player_input){ .left = IsKeyDown(KEY_LEFT), 
+			 .right = IsKeyDown(KEY_RIGHT)};
+}
+
 
 
 
 /**
- * @brief key_input is one of:
- * - MOVE_LEFT
- * - MOVE_RIGHT
- * interp. MOVE_LEFT and MOVE_RIGHT key moves x position of the player to left or right
- * if pressed at same time they cancel out each other
- *
- * Template: 
- * @code{.c} 
- * ??? fn_for_key_input(key_input k){
- * switch(k){
- *    case MOVE_LEFT:
- *            return ....;
- *    case MOVE_RIGHT:
- *           return  ....;
- *  }
- *}
- * @endcode
+ * @brief it takes the x position of the player and return
+ *        - 0 if the player is getting out of left side limit
+ *        - PLAYER_MAX_X if player is trying to get outside the right x limit
+ *        - x itself if it in the bound of limits  
  */
-typedef enum{
-  MOVE_LEFT = KEY_LEFT,
-  MOVE_RIGHT = KEY_RIGHT
-}key_input;
-
-
-
-
-
-
-// Function Definitions 
-/**
- * @brief checks if user has pressed key to move the player.
- * @param key_input 
- * @return bool returns true if the key is pressed and false if the key isn't pressed
- */
-bool key_pressed(key_input k){
- switch(k){
-    case MOVE_LEFT:
-      return IsKeyPressed(MOVE_LEFT);
-    case MOVE_RIGHT:
-      return  sKeyPressed(MOVE_RIGHT);
-  }
+float out_of_bound(float x){
+  if(x < 0){return 0;} 
+  else if(x > PLAYER_MAX_X){ return PLAYER_MAX_X;}
+  return x;
 }
 
 
 /**
- * @brief checks if player is outside the bounderies
- * @param Player
- * @return boolean   returns true if the player is out of the grid and false if it is not 
+ * @brief this function takes read_input() data and return int negative or positive according to the key input that player has given  
+ * @param player_input , this to check which input is true so that i we can give direction
+ * @return int , -1 if p.left is true and 1 if p.right is true if nothing is true then 0 is given 
  */
-bool out_of_bound (Player c){
-  if(c.x >=0 && c.x <= SCREEN_WIDTH){
-    return false;
-  }
+int direction(player_input p){
+  if(p.left){ return -1; }
+  if(p.right) {return 1; }
 
-  return true;
-}
+  return 0;
+} 
 
 /**
- * @brief Moves the player on x axis by the given input and checks if the player  is out of the grid or not 
- * @param Player
- * @return void 
+ * @brief based on the given input by read_input() we will increase or descrese the x position of the player 
+ * @param player
+ * @param dir  
+ * @param delta_time
+ * @return player
  */
 
-void move(Player c){
-  //it should check if the player is out of bound
-  // if it isn't out of bound then it should move the player according to the key the user and input 
+player move(player pl , player_input pi, float delta_time){
+  float distance = PLAYER_SPEED * direction(pi) * delta_time ;
+  float new_x = pl.x + distance;
+  return (player) {.x = out_of_bound(new_x) };
+
 }
 
 
 int main(void){
   InitWindow(SCREEN_WIDTH , SCREEN_HEIGHT, GAME_TITLE);
-  SetTargetFPS(TARGET_FPS);
-  Player p;
+  player p;
   p.x = 100;
-  p.y = PLAYER_Y_POSITION;
-
 
   while(!WindowShouldClose()){
-    // I wish for a function that checks which key is pressed and return updated position  
- 
+    player_input in = read_input();  // on key 
+    p = move(p,in,GetFrameTime()); 
 
     BeginDrawing();
+    ClearBackground(RAYWHITE);
 
-    DrawRectangle(p.x,p.y,PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_COLOR); ///< Player
-
+    DrawRectangle(p.x, PLAYER_Y_POSITION, PLAYER_SIZE, PLAYER_SIZE, PLAYER_COLOR);
     EndDrawing();
   }
   CloseWindow();
