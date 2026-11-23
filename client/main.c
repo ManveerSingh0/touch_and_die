@@ -1,4 +1,6 @@
 #include <raylib.h>
+#include <stdio.h>
+
 
 /**
  * @mainpage TouchAndDie
@@ -33,6 +35,15 @@
 #define PLAYER_MAX_X (SCREEN_WIDTH - PLAYER_SIZE)
 /** @} */
 
+
+/** @name dodge objects
+ * @{
+ */
+#define OBJECT_SIZE     30 
+#define OBJECT_COLOR    LIGHTGRAY
+#define OBJECT_SPEED    300 //< will change the decision of variable object speed later
+#define OBJECT_MAX      10
+/**@}*/
 
 
 
@@ -73,9 +84,44 @@ typedef struct {
 }player_input;
 
 
+/** @brief Object that player has to dodge 
+ * object is (x)float is the x position of the object ,(y)float  y position of the float
+ * Template: 
+ * @code{.c}
+ * ??? fn_for_object(Object o){
+ *  return ... o.x,
+ *             o.y;
+ *}
+ * @endcode
+ */
+typedef struct {
+  float x;
+  float y;
+}Object;
+
+/** @brief keeps the count of the objects
+ * @code{.c}
+ * ??? fn_for_object_count(object_count oc){
+ * for(int i = 0; i < oc.count; i++){
+ *   ... fn_for_object(t.cars[i]);
+ * } 
+ *}
+ * @endcode
+ */
+typedef struct{
+  Object o[OBJECT_MAX];
+  int count;
+}object_count;
+
+
+
 
 
 // Function Definition 
+
+
+
+
 /**
  * @brief Reads the input from the keyboard
  * By using the raylib provided KEYS and updates the player_input 
@@ -131,18 +177,52 @@ player move(player pl , player_input pi, float delta_time){
 
 }
 
+/** @brief moves one object at a time
+ * it should take object and DT to increase the y axis of the object  , it should return the updated object 
+ */
+Object move_object(Object o, float dt){
+  return (Object){ .x = o.x , .y = OBJECT_SPEED * dt + o.y };
+}
+
+// we are trying to move all the  object we have , object_count keeps the count of the object and put them in
+// so i guess we will need to use object count here somehow 
+
+object_count move_all(object_count oc, float dt){
+  for(int i = 0; i < oc.count; i++){
+    oc.o[i] = move_object(oc.o[i], dt);
+  }
+  printf(" %d " , oc.count);
+  return oc;
+} 
+
+
+void draw_objects(object_count t){
+    for (int i = 0; i < t.count; i++) {
+        DrawRectangle((int)t.o[i].x, (int)t.o[i].y, 60, 30, BLUE);
+    }
+}
+
+
 
 int main(void){
   InitWindow(SCREEN_WIDTH , SCREEN_HEIGHT, GAME_TITLE);
   player p;
   p.x = 100;
 
+  object_count oc;
+  oc.count = OBJECT_MAX;
+
   while(!WindowShouldClose()){
     player_input in = read_input();  // on key 
     p = move(p,in,GetFrameTime()); 
 
+    oc = move_all(oc,GetFrameTime());
+
+
     BeginDrawing();
     ClearBackground(RAYWHITE);
+
+    draw_objects(oc);
 
     DrawRectangle(p.x, PLAYER_Y_POSITION, PLAYER_SIZE, PLAYER_SIZE, PLAYER_COLOR);
     EndDrawing();
