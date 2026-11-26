@@ -1,0 +1,34 @@
+#ifndef INPUT_H
+#define INPUT_H
+
+
+/**
+ * @brief struct to check which key is pressed and which is not 
+ * @code{.c}
+ * ??? fn_for_player_input(player_input pi){
+ *  return ... pi.left, 
+ *             pi.right;
+ * }
+ * Examples:
+ * player_input PI1 = {.left = true , .right = false } ;; Player wants to move left
+ * player_input PI1 = {.left = false , .right = true } ;; Player wants to move right
+ * player_input PI1 = {.left = true , .right = true } ;; No movement because both keys are pressed
+ */
+typedef struct {
+  bool left;
+  bool right; 
+}input_keys;
+
+
+/**
+ * @brief Reads the input from the keyboard
+ * By using the raylib provided KEYS and updates the input_keys 
+ * @param void 
+ * @return input_keys 
+ * <use template from input_keys data definition>  
+ */
+input_keys read_input();
+
+
+
+#endif // INPUT_H

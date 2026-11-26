@@ -1,0 +1,41 @@
+#ifndef PLAYER_H
+#define PLAYER_H
+/** @file player.h
+ */
+
+
+/** @name Player
+ * Player Size , color , speed, constant position of it
+ */ 
+
+#define PLAYER_SIZE       50
+#define PLAYER_SPEED      300.0f
+#define PLAYER_COLOR      RED
+#define PLAYER_Y_POSITION (SCREEN_HEIGHT - PLAYER_SIZE)
+
+/**
+ *  maximum a player can move to the player_max_x position  to the right side
+ */
+#define PLAYER_MAX_X (SCREEN_WIDTH - PLAYER_SIZE)
+/** @} */
+
+
+/**
+ * @brief player is the x position of the player 
+ * @code{.c}
+ * ??? fn_for_player(player p){
+ *   return ... p.x;
+ * }
+ * @endcode
+ * Examples:
+ * Player P1 = {.x = SCREEN_WIDTH / 2 } ;; Middle of the screen 
+ * Player P2 = {.x = 0} ;; left side of the screen 
+ * Player P3 = {.x = PLAYER_MAX_X } ;; max right side of the screen 
+ */
+
+typedef struct{
+  float x;
+}player;
+
+
+#endif // PLAYER_H

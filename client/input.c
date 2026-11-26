@@ -1,0 +1,6 @@
+
+
+/* input_keys read_input(){ */
+/*   return (input_keys){ .left = IsKeyDown(KEY_LEFT),  */
+/* 			 .right = IsKeyDown(KEY_RIGHT)}; */
+/* } */

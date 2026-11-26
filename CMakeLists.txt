@@ -17,21 +17,23 @@ FetchContent_Declare(
 	GIT_SHALLOW ON
 )
 FetchContent_MakeAvailable(raylib)
-#[[
+
+
 add_library(client
 	client/player.c
-	client/render.c
-	client/input.c	
-	client/background.c
+	client/input.c
+	client/object.c	
+	client/player.c
+	client/window.c
 )
-]]
 
-# target_link_directories(client PUBLIC ${CMAKE_SOURCE_DIR}/client)
-# target_link_libraries(client PUBLIC raylib)
+
+target_link_directories(client PUBLIC ${CMAKE_SOURCE_DIR}/client)
+target_link_libraries(client PUBLIC raylib)
 
 add_executable(touch_and_die client/main.c)
 target_link_libraries(touch_and_die PRIVATE raylib)
-#target_link_libraries(touch_and_die PRIVATE client)
+target_link_libraries(touch_and_die PRIVATE client)
 
 
 
